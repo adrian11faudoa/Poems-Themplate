@@ -1,66 +1,51 @@
 # Poems Themplate <br>
 
-### Main 1
-Perfect — let’s turn this into a real desktop app 😄
-Below is a complete Python UI application (Tkinter) that lets you:
+### Main 1  ✅ 
+Characteristics:<br>
+Choose background image<br>
+Choose circle image<br>
+Choose font (.ttf)<br>
+Edit title, author, roman numeral, poem text<br>
+Adjust font size<br>
+Generate the final image<br>
+Save the result<br><br>
 
-✅ Choose background image
-✅ Choose circle image
-✅ Choose font (.ttf)
-✅ Edit title, author, roman numeral, poem text
-✅ Adjust font size
-✅ Generate the final image
-✅ Save the result
+Install requirements:<br>
+pip install pillow<br>
 
-All visually, no code editing needed after this.
+(Tkinter comes with Python by default)<br><br>
 
+Folder structure:<br>
+poem_card_ui/<br>
+│<br>
+├─ app.py<br>
+├─ output/<br>
 
-
-Install requirements
-pip install pillow
-
-
-(Tkinter comes with Python by default)
-
-2️⃣ Folder structure
-poem_card_ui/
-│
-├─ app.py
-├─ output/
+- Code Structure:  <br>
+    🟢Imports : Added <br>
 
 
 ### Main 2
+Load background image<br>
+Load circular center image<br>
+Edit all text fields<br>
+Change font family<br>
+Change font size<br>
+Live preview<br>
+Export final image<br><br>
 
-Below is a complete Python UI application (Tkinter + Pillow) that does everything you asked:
+Install requirements:<br>
+pip install pillow<br>
 
-Load background image
+Folder structure:<br>
+poem_card_ui/<br>
+│<br>
+├─ app.py<br>
+├─ fonts/<br>
+│   ├─ PlayfairDisplay-Regular.ttf<br>
+│   ├─ LibreBaskerville-Regular.ttf<br>
+│<br>
+├─ output/<br>
 
-Load circular center image
-
-Edit all text fields
-
-Change font family
-
-Change font size
-
-Live preview
-
-Export final image
-
-This is not a demo snippet — it’s a usable tool.
-
-1️⃣ Install requirements
-pip install pillow
-
-2️⃣ Folder structure
-poem_card_ui/
-│
-├─ app.py
-├─ fonts/
-│   ├─ PlayfairDisplay-Regular.ttf
-│   ├─ LibreBaskerville-Regular.ttf
-│
-├─ output/
-
-
-
+- Code Structure:  <br>
+    🟢Imports : Added <br>
