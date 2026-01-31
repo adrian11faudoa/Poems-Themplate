@@ -1,3 +1,4 @@
+# Imports
 import tkinter as tk
 from tkinter import filedialog, ttk
 from PIL import Image, ImageDraw, ImageFont, ImageTk

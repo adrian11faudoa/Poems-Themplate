@@ -1,3 +1,4 @@
+# Imports
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageDraw, ImageFont, ImageTk
@@ -13,6 +14,7 @@ circle_path = None
 font_path = None
 
 
+
 def create_circular_image(image_path, size):
     img = Image.open(image_path).convert("RGBA")
     img = img.resize((size, size))
@@ -23,6 +25,7 @@ def create_circular_image(image_path, size):
 
     img.putalpha(mask)
     return img
+
 
 
 def generate_image():
@@ -80,11 +83,13 @@ def generate_image():
     messagebox.showinfo("Success", f"Image saved to {output_path}")
 
 
+
 def preview(img):
     img_small = img.resize((300, 400))
     img_tk = ImageTk.PhotoImage(img_small)
     preview_label.config(image=img_tk)
     preview_label.image = img_tk
+
 
 
 def select_bg():
@@ -93,10 +98,12 @@ def select_bg():
     bg_label.config(text=os.path.basename(bg_path))
 
 
+
 def select_circle():
     global circle_path
     circle_path = filedialog.askopenfilename(filetypes=[("Images", "*.png *.jpg *.jpeg")])
     circle_label.config(text=os.path.basename(circle_path))
+
 
 
 def select_font():
@@ -105,9 +112,7 @@ def select_font():
     font_label.config(text=os.path.basename(font_path))
 
 
-# =====================
 # UI
-# =====================
 root = tk.Tk()
 root.title("Poetry Card Generator")
 root.geometry("900x700")
