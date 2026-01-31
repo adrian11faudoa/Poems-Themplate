@@ -1,21 +1,19 @@
 # Poems Themplate <br>
 
 ### Main 1  ✅ 
-Characteristics:<br>
-Choose background image<br>
-Choose circle image<br>
-Choose font (.ttf)<br>
-Edit title, author, roman numeral, poem text<br>
-Adjust font size<br>
-Generate the final image<br>
-Save the result<br><br>
+- Characteristics:<br>
+    Choose background image<br>
+    Choose circle image<br>
+    Choose font (.ttf)<br>
+    Edit title, author, roman numeral, poem text<br>
+    Adjust font size<br>
+    Generate the final image<br>
+    Save the result<br><br>
 
-Install requirements:<br>
-pip install pillow<br>
+- Install requirements:<br>
+    pip install pillow<br>
 
-(Tkinter comes with Python by default)<br><br>
-
-Folder structure:<br>
+- Folder structure:<br>
 poem_card_ui/<br>
 │<br>
 ├─ app.py<br>
@@ -26,18 +24,19 @@ poem_card_ui/<br>
 
 
 ### Main 2
-Load background image<br>
-Load circular center image<br>
-Edit all text fields<br>
-Change font family<br>
-Change font size<br>
-Live preview<br>
-Export final image<br><br>
+- Characteristics:<br>
+    Load background image<br>
+    Load circular center image<br>
+    Edit all text fields<br>
+    Change font family<br>
+    Change font size<br>
+    Live preview<br>
+    Export final image<br><br>
 
-Install requirements:<br>
-pip install pillow<br>
+- Install requirements:<br>
+    pip install pillow<br>
 
-Folder structure:<br>
+- Folder structure:<br>
 poem_card_ui/<br>
 │<br>
 ├─ app.py<br>
@@ -49,3 +48,4 @@ poem_card_ui/<br>
 
 - Code Structure:  <br>
     🟢Imports : Added <br>
+    
