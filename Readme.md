@@ -8,7 +8,7 @@
     Edit title, author, roman numeral, poem text<br>
     Adjust font size<br>
     Generate the final image<br>
-    Save the result<br><br>
+    Save the result<br>
 
 - Install requirements:<br>
     pip install pillow<br>
@@ -31,7 +31,7 @@ poem_card_ui/<br>
     Change font family<br>
     Change font size<br>
     Live preview<br>
-    Export final image<br><br>
+    Export final image<br>
 
 - Install requirements:<br>
     pip install pillow<br>
@@ -48,4 +48,3 @@ poem_card_ui/<br>
 
 - Code Structure:  <br>
     🟢Imports : Added <br>
-    
