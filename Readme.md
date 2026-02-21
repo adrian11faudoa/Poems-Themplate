@@ -20,8 +20,12 @@ poem_card_ui/<br>
 ├─ output/<br>
 
 ### Code Structure:  <br>
-    🟢Imports : Added <br>
-
+🟢Imports : Added <br>
+🟢Global Variables : Added <br>
+🟢Create Circular Image Function : Added <br>
+🟢Generate Image Function : Added <br>
+🟢Selection Functions : Added <br>
+🟢UI : Added <br>
 
 
 ## Main 2
