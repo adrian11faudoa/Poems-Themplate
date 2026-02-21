@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 import textwrap
 import os
 
+# Global Variables
 CANVAS_SIZE = (1200, 1600)
 MARGIN = 120
 TEXT_COLOR = (0, 0, 0)
@@ -14,7 +15,7 @@ circle_path = None
 font_path = None
 
 
-
+# Create Circular Image Function
 def create_circular_image(image_path, size):
     img = Image.open(image_path).convert("RGBA")
     img = img.resize((size, size))
@@ -27,7 +28,7 @@ def create_circular_image(image_path, size):
     return img
 
 
-
+# Generate Image Function
 def generate_image():
     if not bg_path or not circle_path or not font_path:
         messagebox.showerror("Missing files", "Please select background, circle image and font.")
@@ -91,6 +92,7 @@ def preview(img):
     preview_label.image = img_tk
 
 
+# Selection Functions
 
 def select_bg():
     global bg_path
