@@ -9,6 +9,7 @@ CANVAS_SIZE = (1200, 1600)
 MARGIN = 120
 TEXT_COLOR = (0, 0, 0)
 
+# Class Poem Card App
 class PoemCardApp:
     def __init__(self, root):
         self.root = root
@@ -26,6 +27,7 @@ class PoemCardApp:
         self.create_ui()
         self.preview_label = None
 
+    # UI
     def create_ui(self):
         controls = tk.Frame(self.root)
         controls.pack(side="left", fill="y", padx=10)

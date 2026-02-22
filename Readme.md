@@ -52,4 +52,8 @@ poem_card_ui/<br>
 ├─ output/<br>
 
 ### Code Structure:  <br>
-    🟢Imports : Added <br>
+    🟢Imports : Added 
+    🟢Class Poem Card App : Added 
+    🟢UI : Added 
+
+    
