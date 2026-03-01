@@ -11,7 +11,7 @@
 
 
 
-## Main 1  ✅ 
+## Main 1  
 ### Characteristics:<br>
 Choose background image<br>
 Choose circle image<br>
