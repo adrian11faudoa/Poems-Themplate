@@ -1,5 +1,13 @@
 # Poems Themplate <br>
 
+### Create virtual enviroment
+  python -m venv .venv
+
+### Activate virtual enviroment
+  .\.venv\Scripts\activate
+
+
+
 ## Main 1  ✅ 
 ### Characteristics:<br>
 Choose background image<br>
@@ -11,7 +19,7 @@ Generate the final image<br>
 Save the result<br>
 
 ### Install requirements:<br>
-    pip install pillow<br>
+    pip install pillow 
 
 ### Folder structure:<br>
 poem_card_ui/<br>
