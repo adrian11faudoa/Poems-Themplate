@@ -1,10 +1,13 @@
 # Poems Themplate <br>
 
-### Create virtual enviroment
-  python -m venv .venv
+### Create virtual enviroment  
+    python -m venv .venv
+
+### Install requirements 
+    python -m pip install pillow
 
 ### Activate virtual enviroment
-  .\.venv\Scripts\activate
+    .\.venv\Scripts\activate
 
 
 
@@ -18,8 +21,6 @@ Adjust font size<br>
 Generate the final image<br>
 Save the result<br>
 
-### Install requirements:<br>
-    pip install pillow 
 
 ### Folder structure:<br>
 poem_card_ui/<br>
@@ -46,8 +47,6 @@ Change font size<br>
 Live preview<br>
 Export final image<br>
 
-### Install requirements:<br>
-    pip install pillow<br>
 
 ### Folder structure:<br>
 poem_card_ui/<br>
