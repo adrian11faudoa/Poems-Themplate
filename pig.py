@@ -39,25 +39,68 @@ DEFAULT_BODY_TEXT = (
 
 
 def load_pil_font(family: str, size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
-    variants = []
-    if bold:
-        variants += [
-            "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf",
-            "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf",
-            "/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf",
-        ]
-    variants += [
-        "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
-        "/usr/share/fonts/truetype/freefont/FreeSerif.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    family_l = (family or "").strip().lower()
+
+    win_fonts = os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts")
+    linux_fonts = "/usr/share/fonts/truetype"
+    mac_fonts = "/System/Library/Fonts/Supplemental"
+
+    serif_regular = [
+        os.path.join(win_fonts, "georgia.ttf"),
+        os.path.join(win_fonts, "times.ttf"),
+        os.path.join(win_fonts, "times new roman.ttf"),
+        os.path.join(win_fonts, "cambria.ttc"),
+        os.path.join(mac_fonts, "Georgia.ttf"),
+        os.path.join(mac_fonts, "Times New Roman.ttf"),
+        f"{linux_fonts}/dejavu/DejaVuSerif.ttf",
+        f"{linux_fonts}/freefont/FreeSerif.ttf",
+        f"{linux_fonts}/liberation/LiberationSerif-Regular.ttf",
     ]
+    serif_bold = [
+        os.path.join(win_fonts, "georgiab.ttf"),
+        os.path.join(win_fonts, "timesbd.ttf"),
+        os.path.join(win_fonts, "times new roman bold.ttf"),
+        os.path.join(mac_fonts, "Georgia Bold.ttf"),
+        os.path.join(mac_fonts, "Times New Roman Bold.ttf"),
+        f"{linux_fonts}/dejavu/DejaVuSerif-Bold.ttf",
+        f"{linux_fonts}/freefont/FreeSerifBold.ttf",
+        f"{linux_fonts}/liberation/LiberationSerif-Bold.ttf",
+    ]
+    sans_regular = [
+        os.path.join(win_fonts, "calibri.ttf"),
+        os.path.join(win_fonts, "segoeui.ttf"),
+        os.path.join(win_fonts, "arial.ttf"),
+        f"{linux_fonts}/dejavu/DejaVuSans.ttf",
+    ]
+    sans_bold = [
+        os.path.join(win_fonts, "calibrib.ttf"),
+        os.path.join(win_fonts, "segoeuib.ttf"),
+        os.path.join(win_fonts, "arialbd.ttf"),
+        f"{linux_fonts}/dejavu/DejaVuSans-Bold.ttf",
+    ]
+
+    is_serif = any(name in family_l for name in ("georgia", "serif", "times", "cambria"))
+    variants = (serif_bold if bold else serif_regular) if is_serif else (sans_bold if bold else sans_regular)
+    # Keep a final mixed fallback list so rendering still succeeds even if
+    # the preferred family is unavailable on this machine.
+    variants += (serif_bold if bold else serif_regular) + (sans_bold if bold else sans_regular)
+
+    seen = set()
     for path in variants:
+        if path in seen:
+            continue
+        seen.add(path)
         if os.path.exists(path):
             try:
                 return ImageFont.truetype(path, size)
             except Exception:
                 continue
+
+    for fallback_name in ("arial.ttf", "DejaVuSans.ttf"):
+        try:
+            return ImageFont.truetype(fallback_name, size)
+        except Exception:
+            continue
     return ImageFont.load_default()
 
 
@@ -303,7 +346,7 @@ class PoemImageApp(tk.Tk):
         super().__init__()
         self.title("Poem Image Generator")
         self.resizable(True, True)
-        self.configure(bg="#1e1e2e")
+        self.configure(bg="#101828")
 
         self.bg_image: Image.Image | None = None
         self.circle_image: Image.Image | None = None
@@ -341,15 +384,115 @@ class PoemImageApp(tk.Tk):
     def _build_ui(self):
         style = ttk.Style(self)
         style.theme_use("clam")
-        style.configure("TLabel", background="#1e1e2e", foreground="#cdd6f4", font=("Helvetica", 11))
-        style.configure("TFrame", background="#1e1e2e")
-        style.configure("TLabelframe", background="#1e1e2e", foreground="#89b4fa", font=("Helvetica", 11, "bold"))
-        style.configure("TLabelframe.Label", background="#1e1e2e", foreground="#89b4fa")
-        style.configure("TEntry", fieldbackground="#313244", foreground="#cdd6f4", insertcolor="#cdd6f4")
-        style.configure("TSpinbox", fieldbackground="#313244", foreground="#cdd6f4", arrowcolor="#cdd6f4")
-        style.configure("TCombobox", fieldbackground="#313244", foreground="#cdd6f4")
-        style.configure("TButton", background="#89b4fa", foreground="#1e1e2e", font=("Helvetica", 11, "bold"), padding=6)
-        style.map("TButton", background=[("active", "#b4befe")])
+        self.palette = {
+            "bg_main": "#101828",
+            "bg_panel": "#0f172a",
+            "bg_section": "#111b34",
+            "bg_canvas": "#1f2937",
+            "text_main": "#e5e7eb",
+            "text_muted": "#94a3b8",
+            "accent": "#38bdf8",
+            "accent_soft": "#7dd3fc",
+            "border": "#334155",
+            "field_bg": "#1e293b",
+            "field_fg": "#f8fafc",
+            "success": "#34d399",
+        }
+
+        self.configure(bg=self.palette["bg_main"])
+        font_base = ("Segoe UI", 10)
+        style.configure("TFrame", background=self.palette["bg_main"])
+        style.configure("TLabel", background=self.palette["bg_main"], foreground=self.palette["text_main"], font=font_base)
+        style.configure(
+            "TLabelframe",
+            background=self.palette["bg_section"],
+            bordercolor=self.palette["border"],
+            relief="solid",
+            borderwidth=1,
+        )
+        style.configure(
+            "TLabelframe.Label",
+            background=self.palette["bg_main"],
+            foreground=self.palette["accent"],
+            font=("Segoe UI Semibold", 10),
+        )
+        style.configure(
+            "TEntry",
+            fieldbackground=self.palette["field_bg"],
+            foreground=self.palette["field_fg"],
+            bordercolor=self.palette["border"],
+            insertcolor=self.palette["field_fg"],
+            padding=4,
+        )
+        style.configure(
+            "TSpinbox",
+            fieldbackground=self.palette["field_bg"],
+            foreground=self.palette["field_fg"],
+            arrowcolor=self.palette["accent_soft"],
+            bordercolor=self.palette["border"],
+            padding=3,
+        )
+        style.configure(
+            "TCombobox",
+            fieldbackground=self.palette["field_bg"],
+            foreground=self.palette["field_fg"],
+            arrowcolor=self.palette["accent_soft"],
+            bordercolor=self.palette["border"],
+            padding=3,
+        )
+        style.configure(
+            "TButton",
+            background=self.palette["accent"],
+            foreground="#062233",
+            bordercolor=self.palette["accent"],
+            focusthickness=1,
+            focuscolor=self.palette["accent_soft"],
+            font=("Segoe UI Semibold", 10),
+            padding=8,
+        )
+        style.map(
+            "TButton",
+            background=[("active", self.palette["accent_soft"])],
+            foreground=[("active", "#041620")],
+        )
+        style.configure(
+            "Accent.TButton",
+            background=self.palette["accent"],
+            foreground="#041620",
+            bordercolor=self.palette["accent"],
+            font=("Segoe UI Semibold", 10),
+            padding=10,
+        )
+        style.map(
+            "Accent.TButton",
+            background=[("active", self.palette["accent_soft"])],
+            foreground=[("active", "#041620")],
+        )
+        style.configure(
+            "Danger.TButton",
+            background="#fca5a5",
+            foreground="#3f0d0d",
+            bordercolor="#fca5a5",
+            font=("Segoe UI Semibold", 10),
+            padding=8,
+        )
+        style.map(
+            "Danger.TButton",
+            background=[("active", "#fecaca")],
+            foreground=[("active", "#3f0d0d")],
+        )
+        style.configure(
+            "Header.TLabel",
+            background=self.palette["bg_main"],
+            foreground=self.palette["accent"],
+            font=("Segoe UI Semibold", 14),
+        )
+        style.configure(
+            "Muted.TLabel",
+            background=self.palette["bg_main"],
+            foreground=self.palette["text_muted"],
+            font=("Segoe UI", 9),
+        )
 
         self.columnconfigure(0, weight=0)
         self.columnconfigure(1, weight=1)
@@ -361,7 +504,7 @@ class PoemImageApp(tk.Tk):
         left_outer.rowconfigure(0, weight=1)
         left_outer.columnconfigure(0, weight=1)
 
-        canvas_scroll = tk.Canvas(left_outer, bg="#1e1e2e", highlightthickness=0, width=440)
+        canvas_scroll = tk.Canvas(left_outer, bg=self.palette["bg_panel"], highlightthickness=0, width=440)
         scrollbar = ttk.Scrollbar(left_outer, orient="vertical", command=canvas_scroll.yview)
         canvas_scroll.configure(yscrollcommand=scrollbar.set)
         canvas_scroll.grid(row=0, column=0, sticky="nsew")
@@ -395,7 +538,7 @@ class PoemImageApp(tk.Tk):
         right_frame.rowconfigure(2, weight=0)
         right_frame.columnconfigure(0, weight=1)
 
-        ttk.Label(right_frame, text="Live Preview", font=("Helvetica", 13, "bold"), foreground="#89b4fa").grid(
+        ttk.Label(right_frame, text="Live Preview", style="Header.TLabel").grid(
             row=0, column=0, pady=(0, 8)
         )
 
@@ -403,13 +546,15 @@ class PoemImageApp(tk.Tk):
             right_frame,
             width=max(360, int(CANVAS_W * PREVIEW_SCALE)),
             height=max(440, int(CANVAS_H * PREVIEW_SCALE)),
-            bg="#313244",
+            bg=self.palette["bg_canvas"],
             highlightthickness=2,
-            highlightbackground="#585b70",
+            highlightbackground=self.palette["border"],
             cursor="arrow",
         )
         self.preview_canvas.grid(row=1, column=0, sticky="nsew")
-        ttk.Button(right_frame, text="Download Image", command=self._export_image).grid(row=2, column=0, pady=16)
+        ttk.Button(right_frame, text="Download Image", command=self._export_image, style="Accent.TButton").grid(
+            row=2, column=0, pady=16
+        )
 
         right_frame.bind("<Configure>", self._on_right_frame_resize)
         self.preview_canvas.bind("<MouseWheel>", self._on_preview_mousewheel)
@@ -428,17 +573,21 @@ class PoemImageApp(tk.Tk):
         img_frame.columnconfigure(1, minsize=190)
         img_frame.columnconfigure(2, minsize=64)
 
-        self.bg_label = ttk.Label(img_frame, text="No background image", foreground="#6c7086")
+        self.bg_label = ttk.Label(img_frame, text="No background image", style="Muted.TLabel")
         self.bg_label.grid(row=0, column=0, sticky="w", padx=4)
         ttk.Button(img_frame, text="Choose Background", command=self._pick_bg).grid(row=0, column=1, padx=4, sticky="ew")
-        ttk.Button(img_frame, text="Clear", command=self._clear_bg).grid(row=0, column=2, padx=2, sticky="ew")
+        ttk.Button(img_frame, text="Clear", command=self._clear_bg, style="Danger.TButton").grid(
+            row=0, column=2, padx=2, sticky="ew"
+        )
 
-        self.circ_label = ttk.Label(img_frame, text="No circular image", foreground="#6c7086")
+        self.circ_label = ttk.Label(img_frame, text="No circular image", style="Muted.TLabel")
         self.circ_label.grid(row=1, column=0, sticky="w", padx=4, pady=(8, 0))
         ttk.Button(img_frame, text="Choose Circular Image", command=self._pick_circle).grid(
             row=1, column=1, padx=4, pady=(8, 0), sticky="ew"
         )
-        ttk.Button(img_frame, text="Clear", command=self._clear_circle).grid(row=1, column=2, padx=2, pady=(8, 0), sticky="ew")
+        ttk.Button(img_frame, text="Clear", command=self._clear_circle, style="Danger.TButton").grid(
+            row=1, column=2, padx=2, pady=(8, 0), sticky="ew"
+        )
 
         ttk.Label(img_frame, text="Background blur:").grid(row=2, column=0, sticky="w", padx=4, pady=(8, 0))
         self.bg_blur_var = tk.IntVar(value=0)
@@ -466,8 +615,20 @@ class PoemImageApp(tk.Tk):
 
         ttk.Label(text_frame, text="Body Text:").grid(row=3, column=0, sticky="nw", pady=(8, 3), padx=4)
         self.body_text = tk.Text(
-            text_frame, width=34, height=12, bg="#313244", fg="#cdd6f4", insertbackground="#cdd6f4",
-            font=("Georgia", 11), relief="flat", padx=6, pady=6, wrap="word"
+            text_frame,
+            width=34,
+            height=12,
+            bg=self.palette["field_bg"],
+            fg=self.palette["field_fg"],
+            insertbackground=self.palette["field_fg"],
+            font=("Georgia", 11),
+            relief="flat",
+            padx=8,
+            pady=8,
+            wrap="word",
+            highlightthickness=1,
+            highlightbackground=self.palette["border"],
+            highlightcolor=self.palette["accent"],
         )
         self.body_text.grid(row=3, column=1, sticky="ew", pady=(8, 3), padx=4)
         self.body_text.insert("1.0", DEFAULT_BODY_TEXT)
@@ -543,12 +704,12 @@ class PoemImageApp(tk.Tk):
         )
         self.web_size_combo.grid(row=4, column=1, sticky="w", padx=4, pady=3)
 
-        ttk.Label(layout_frame, text="Tip: drag elements, drag card edges, wheel zoom.", foreground="#6c7086", font=("Helvetica", 9)).grid(
+        ttk.Label(layout_frame, text="Tip: drag elements, drag card edges, wheel zoom.", style="Muted.TLabel").grid(
             row=5, column=0, columnspan=2, sticky="w", padx=4, pady=(6, 2)
         )
-        self.selected_label = ttk.Label(layout_frame, text="Selected: none", foreground="#94e2d5")
+        self.selected_label = ttk.Label(layout_frame, text="Selected: none", foreground=self.palette["accent_soft"])
         self.selected_label.grid(row=6, column=0, columnspan=2, sticky="w", padx=4, pady=2)
-        ttk.Button(layout_frame, text="Reset to default values", command=self._reset_defaults).grid(
+        ttk.Button(layout_frame, text="Reset to default values", command=self._reset_defaults, style="Accent.TButton").grid(
             row=7, column=0, columnspan=2, sticky="ew", padx=4, pady=(6, 2)
         )
         ttk.Label(parent, text="").pack()
@@ -561,14 +722,14 @@ class PoemImageApp(tk.Tk):
         if path:
             try:
                 self.bg_image = Image.open(path)
-                self.bg_label.config(text=f"OK {os.path.basename(path)[:28]}", foreground="#a6e3a1")
+                self.bg_label.config(text=f"OK {os.path.basename(path)[:28]}", foreground=self.palette["success"])
                 self._schedule_preview()
             except Exception as exc:
                 messagebox.showerror("Error", f"Could not load image:\n{exc}")
 
     def _clear_bg(self):
         self.bg_image = None
-        self.bg_label.config(text="No background image", foreground="#6c7086")
+        self.bg_label.config(text="No background image", foreground=self.palette["text_muted"])
         self._schedule_preview()
 
     def _pick_circle(self):
@@ -579,14 +740,14 @@ class PoemImageApp(tk.Tk):
         if path:
             try:
                 self.circle_image = Image.open(path)
-                self.circ_label.config(text=f"OK {os.path.basename(path)[:28]}", foreground="#a6e3a1")
+                self.circ_label.config(text=f"OK {os.path.basename(path)[:28]}", foreground=self.palette["success"])
                 self._schedule_preview()
             except Exception as exc:
                 messagebox.showerror("Error", f"Could not load image:\n{exc}")
 
     def _clear_circle(self):
         self.circle_image = None
-        self.circ_label.config(text="No circular image", foreground="#6c7086")
+        self.circ_label.config(text="No circular image", foreground=self.palette["text_muted"])
         self._schedule_preview()
 
     def _on_web_opt_toggle(self):
@@ -596,8 +757,8 @@ class PoemImageApp(tk.Tk):
         # Image inputs
         self.bg_image = None
         self.circle_image = None
-        self.bg_label.config(text="No background image", foreground="#6c7086")
-        self.circ_label.config(text="No circular image", foreground="#6c7086")
+        self.bg_label.config(text="No background image", foreground=self.palette["text_muted"])
+        self.circ_label.config(text="No circular image", foreground=self.palette["text_muted"])
         self.bg_blur_var.set(0)
 
         # Text inputs
@@ -745,10 +906,10 @@ class PoemImageApp(tk.Tk):
         x1, y1 = self._world_to_canvas(bbox[2], bbox[3])
         self.preview_canvas.create_rectangle(x0, y0, x1, y1, outline="#f9e2af", width=2, dash=(6, 4))
         if self.selected_element == "card":
-            self.preview_canvas.create_line(x0, y0, x1, y0, fill="#a6e3a1", width=2)
-            self.preview_canvas.create_line(x0, y1, x1, y1, fill="#a6e3a1", width=2)
-            self.preview_canvas.create_line(x0, y0, x0, y1, fill="#a6e3a1", width=2)
-            self.preview_canvas.create_line(x1, y0, x1, y1, fill="#a6e3a1", width=2)
+            self.preview_canvas.create_line(x0, y0, x1, y0, fill=self.palette["success"], width=2)
+            self.preview_canvas.create_line(x0, y1, x1, y1, fill=self.palette["success"], width=2)
+            self.preview_canvas.create_line(x0, y0, x0, y1, fill=self.palette["success"], width=2)
+            self.preview_canvas.create_line(x1, y0, x1, y1, fill=self.palette["success"], width=2)
 
     def _on_right_frame_resize(self, event):
         available_w = max(280, event.width - 16)
